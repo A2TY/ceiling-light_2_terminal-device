@@ -1,1 +1,2 @@
-# project_C2T
+# Project Ceiling Light 2 Terminal Device
+
