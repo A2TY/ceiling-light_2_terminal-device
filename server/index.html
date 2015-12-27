@@ -1,0 +1,78 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>リモコン</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no" >
+    <script language="javascript">
+      var ws = new WebSocket("ws://serverAddress:8080/ws");
+      //ws.onopen = function() {
+        //ws.send("Hello, world");
+      //};
+      //ws.onmessage = function (evt) {
+        //document.write("<strong>" + evt.data + "</strong>");
+      //};
+      function sendMessage(value) {
+        ws.send(value);
+      }
+    </script>
+  </head>
+  <body>  #TVのリモコンボタン
+    <p>
+      <center>
+        <span style="margin-right:230px;"></span>
+        <input type="button" value="power" onclick="sendMessage('power')" style=' width:80px; height:50px; font-size:15px; color:#FFFFFF; background-color:RED;'>
+      </center>
+    </p>
+    <p>
+      <center>
+        <input type="button" value="1ch" onclick="sendMessage('1ch')" style='width:80px;  height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+        <span style="margin-right:30px;"></span>
+        <input type="button" value="2ch" onclick="sendMessage('2ch')" style='width:80px;  height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+        <span style="margin-right:30px;"></span>
+        <input type="button" value="3ch" onclick="sendMessage('3ch')" style='width:80px;  height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+      </center>
+    </p>
+    <p>
+      <center>
+        <input type="button" value="4ch" onclick="sendMessage('4ch')" style='width:80px;  height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+        <span style="margin-right:30px;"></span>
+        <input type="button" value="5ch" onclick="sendMessage('5ch')" style='width:80px;  height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+        <span style="margin-right:30px;"></span>
+        <input type="button" value="6ch" onclick="sendMessage('6ch')" style='width:80px; height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+      </center>
+    </p>
+    <p>
+      <center>
+        <input type="button" value="7ch" onclick="sendMessage('7ch')" style='width:80px;  height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+        <span style="margin-right:30px;"></span>
+        <input type="button" value="8ch" onclick="sendMessage('8ch')" style='width:80px;  height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+        <span style="margin-right:30px;"></span>
+        <input type="button" value="9ch" onclick="sendMessage('9ch')" style='width:80px; height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+      </center>
+    </p>
+    <p>
+      <center>
+        <input type="button" value="10ch" onclick="sendMessage('10ch')" style='width:80px;  height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+        <span style="margin-right:30px;"></span>
+        <input type="button" value="11ch" onclick="sendMessage('11ch')" style='width:80px;  height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+        <span style="margin-right:30px;"></span>
+        <input type="button" value="12ch" onclick="sendMessage('12ch')" style='width:80px;  height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+      </center>
+    </p>
+    <span style="margin:50px;"></span>
+    <p>
+      <center>
+        <input type="button" value="CH↑" onclick="sendMessage('ch_up')" style='width:80px;  height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+        <span style="margin-right:144px;"></span>
+        <input type="button" value="音量↑" onclick="sendMessage('vol_up')" style='width:80px; height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+      </center>
+    </p>
+    <p>
+      <center>
+        <input type="button" value="CH↓" onclick="sendMessage('ch_down')" style=' width:80px; height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+        <span style="margin-right:144px;"></span>
+        <input type="button" value="音量↓" onclick="sendMessage('vol_down')" style='width:80px; height:50px; font-size:15px; color:BRACK; background-color:#ebebeb;'>
+      </center>
+    </p>
+  </body>
+</html>
