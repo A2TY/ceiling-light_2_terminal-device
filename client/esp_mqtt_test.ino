@@ -52,10 +52,11 @@ Adafruit_MQTT_Subscribe test2Subscriber = Adafruit_MQTT_Subscribe(&mqtt, TEST_TO
 
 IRsend irsend(5); // GPIO 5を赤外線送信に使用
 
-#define IR_LED 5
+//#define IR_LED 5
 
 void setup() {
     Serial.begin(115200);
+    irsend.begin();
     delay(10);
 
     Serial.println(F("MQTT demo"));
@@ -134,6 +135,7 @@ void sendIrData(String data) {
         irsend.sendNEC(0x2FD7887, 32);
     }
 }
+
 
 uint32_t x=0;
 
