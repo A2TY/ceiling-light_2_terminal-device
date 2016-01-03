@@ -42,17 +42,14 @@ Adafruit_MQTT_Client mqtt(&client, MQTT_SERVER, YOUR_SERVERPORT, MQTT_CLIENTID, 
 /****************************** Topic ***************************************/
 
 // pubulisher & subscriberの設定
-const char TEST_TOPIC[] PROGMEM = "test";
-const char TEST_TOPIC2[] PROGMEM = "test2";
+const char TEST_TOPIC[] PROGMEM = "device/device1/tvIr";
 Adafruit_MQTT_Publish testPublisher = Adafruit_MQTT_Publish(&mqtt, TEST_TOPIC);
-Adafruit_MQTT_Subscribe testSubscriber = Adafruit_MQTT_Subscribe(&mqtt, TEST_TOPIC);
-Adafruit_MQTT_Subscribe test2Subscriber = Adafruit_MQTT_Subscribe(&mqtt, TEST_TOPIC2);
+Adafruit_MQTT_Subscribe tvIrSubscriber = Adafruit_MQTT_Subscribe(&mqtt, TEST_TOPIC);
 
 /*************************** Sketch Code ************************************/
 
 IRsend irsend(5); // GPIO 5を赤外線送信に使用
 
-//#define IR_LED 5
 
 void setup() {
     Serial.begin(115200);
@@ -77,8 +74,7 @@ void setup() {
     Serial.println("IP address: "); Serial.println(WiFi.localIP());
 
     // MQTT subscriptionを設定
-    mqtt.subscribe(&testSubscriber);
-    mqtt.subscribe(&test2Subscriber);
+    mqtt.subscribe(&tvIrSubscriber);
 }
 
 // TVに赤外線送信
@@ -142,59 +138,17 @@ uint32_t x=0;
 void loop() {
     MQTT_connect();
     String recevIrData;
-    //char remocon;
 
     // topicを監視しsubscriptionのmessageを受け取る
     Adafruit_MQTT_Subscribe *subscription;
     while ((subscription = mqtt.readSubscription(1000))) {
-
-        if (subscription == &testSubscriber) {
+        if (subscription == &tvIrSubscriber) {
             Serial.print(F("Got: "));
-            Serial.println((char *)testSubscriber.lastread);
-            //led = atoi((char *)testSubscriber.lastread); // char型をint型に変換
-            recevIrData = String((char *)testSubscriber.lastread); // subscriptionのmessageを受け取る
+            Serial.println((char *)tvIrSubscriber.lastread);
+            recevIrData = String((char *)tvIrSubscriber.lastread); // subscriptionのmessageを受け取る
             sendIrData(recevIrData);
-
-    //     remocon = *testSubscriber.lastread;
-    //     Serial.println(remocon);
-    //     if (led == 1) {
-    //      int dataSize = sizeof(tv_volup) / sizeof(tv_volup[0]);
-    //      Serial.println(dataSize);
-    //      for (int cnt = 0; cnt < dataSize; cnt++) {
-    //        unsigned long len = tv_volup[cnt]*10;  // dataは10us単位でON/OFF時間を記録している
-    //        unsigned long us = micros();
-    //        do {
-    //          digitalWrite(IR_LED, 1 - (cnt&1)); // cntが偶数なら赤外線ON、奇数ならOFFのまま
-    //          delayMicroseconds(8);  // キャリア周波数38kHzでON/OFFするよう時間調整
-    //          digitalWrite(IR_LED, 0);
-    //          delayMicroseconds(7);
-    //          Serial.print(len + ", ");
-    //        } while (long(us + len - micros()) > 0); // 送信時間に達するまでループ
-    //      }
-    //     }
-    //     led = atoi((char *)testSubscriber.lastread); //char型をint型に変換
-    //     Serial.println(led);
-    //     //指定したピン番号のLEDを点灯
-    //     if (led == 12) {
-    //      digitalWrite(12, HIGH);
-    //     } else if (led == 13) {
-    //      digitalWrite(13, HIGH);
-    //     } else if (led == 14) {
-    //      digitalWrite(14, HIGH);
-    //     } else {
-    //      digitalWrite(12, LOW);
-    //      digitalWrite(13, LOW);
-    //      digitalWrite(14, LOW);
-    //     }
-
-        }
-        if (subscription == &test2Subscriber) {
-            Serial.print(F("Got: "));
-            Serial.println((char *)test2Subscriber.lastread);
         }
     }
-
-      //testPublisher.publish(1);
 
         delay(1000);
 }
