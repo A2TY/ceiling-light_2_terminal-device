@@ -42,9 +42,13 @@ Adafruit_MQTT_Client mqtt(&client, MQTT_SERVER, YOUR_SERVERPORT, MQTT_CLIENTID, 
 /****************************** Topic ***************************************/
 
 // pubulisher & subscriberの設定
-const char TEST_TOPIC[] PROGMEM = "device/device1/tvIr";
-Adafruit_MQTT_Publish testPublisher = Adafruit_MQTT_Publish(&mqtt, TEST_TOPIC);
-Adafruit_MQTT_Subscribe tvIrSubscriber = Adafruit_MQTT_Subscribe(&mqtt, TEST_TOPIC);
+const char TOPIC_TVIR[] PROGMEM = "device/device1/tvIr";
+const char TOPIC_TRAIN_COLOR[] PROGMEM = "device/device1/trainColor";
+const char TOPIC_WETHER_COLOR[] PROGMEM = "device/device1/wetherColor";
+//Adafruit_MQTT_Publish testPublisher = Adafruit_MQTT_Publish(&mqtt, TOPIC);
+Adafruit_MQTT_Subscribe tvIrSubscriber = Adafruit_MQTT_Subscribe(&mqtt, TOPIC_TVIR);
+Adafruit_MQTT_Subscribe trainColorSubscriber = Adafruit_MQTT_Subscribe(&mqtt, TOPIC_TRAIN_COLOR);
+Adafruit_MQTT_Subscribe wetherColorSubscriber = Adafruit_MQTT_Subscribe(&mqtt, TOPIC_WETHER_COLOR);
 
 /*************************** Sketch Code ************************************/
 
@@ -54,6 +58,9 @@ IRsend irsend(5); // GPIO 5を赤外線送信に使用
 void setup() {
     Serial.begin(115200);
     irsend.begin();
+    pinMode(12, OUTPUT);
+    pinMode(13, OUTPUT);
+    pinMode(14, OUTPUT);
     delay(10);
 
     Serial.println(F("MQTT demo"));
@@ -145,12 +152,24 @@ void loop() {
         if (subscription == &tvIrSubscriber) {
             Serial.print(F("Got: "));
             Serial.println((char *)tvIrSubscriber.lastread);
-            recevIrData = String((char *)tvIrSubscriber.lastread); // subscriptionのmessageを受け取る
+            recevIrData = String((char *)tvIrSubscriber.lastread);        // subscriptionのmessageを受け取る
             sendIrData(recevIrData);
+        }
+        if (subscription == &trainColorSubscriber) {
+            Serial.print(F("Got: "));
+            Serial.println((char *)trainColorSubscriber.lastread);
+            recevIrData = String((char *)trainColorSubscriber.lastread);  // subscriptionのmessageを受け取る
+
+        }
+        if (subscription == &wetherColorSubscriber) {
+            Serial.print(F("Got: "));
+            Serial.println((char *)wetherColorSubscriber.lastread);
+            recevIrData = String((char *)wetherColorSubscriber.lastread); // subscriptionのmessageを受け取る
+
         }
     }
 
-        delay(1000);
+    delay(1000);
 }
 
 // MQTT serverの接続状況を調べ切断されていれば再接続
