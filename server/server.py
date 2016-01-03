@@ -27,7 +27,7 @@ class SendWebSocket(tornado.websocket.WebSocketHandler):
     #クライアントからメッセージが送られてくると呼び出す
     def on_message(self, message):
         print (message)
-        cmd = "mosquitto_pub -h serverAddress -t \"test\" -m \"" + message + "\""
+        cmd = "mosquitto_pub -h serverAddress -t \"device/device1/tvIr\" -m \"" + message + "\""
         print (cmd)
         os.system(cmd)
 
