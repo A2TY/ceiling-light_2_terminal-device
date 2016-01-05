@@ -54,10 +54,13 @@ class ScrapingWetherTweet():
         if "雨" in tweetTextWether or "雪" in tweetTextWether:
             sendCommandWetherColor = "blue"
             self.sendCommandMQTT(sendCommandWetherColor)
+        else:
+            sendCommandWetherColor = "black"
+            self.sendCommandMQTT(sendCommandWetherColor)
 
-    #東京都の天気予報（@tokyo_wf）から最新のツイートを1件取得
+    #tenki.jp （ 東京 ）（@tenkijp_tokyo）から最新のツイートを1件取得
     def get_tweetTextWether(api):
-        tweetTextWether = api.user_timeline(id=395441059, count=1)[0].text
+        tweetTextWether = api.user_timeline(id=2307824377, count=1)[0].text
         return tweetTextWether
 
     #MQTTサーバに天気情報をpub
