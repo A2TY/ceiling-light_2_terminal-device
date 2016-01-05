@@ -82,6 +82,8 @@ void setup() {
 
     // MQTT subscriptionを設定
     mqtt.subscribe(&tvIrSubscriber);
+    mqtt.subscribe(&trainColorSubscriber);
+    mqtt.subscribe(&wetherColorSubscriber);
 }
 
 // TVに赤外線送信
@@ -139,12 +141,49 @@ void sendIrData(String data) {
     }
 }
 
+int blackCounter = 0;   // 電車の運行情報によるLED点灯を4回目のsubでリセット
+
+// 電車の運行情報をLEDの点灯で通知
+void onTrainLight(String recevTrainColor) {
+    if (recevTrainColor == "green") {   // 平常通りの運行の時
+        blackCounter = 0;
+        digitalWrite(13, LOW);
+        digitalWrite(14, HIGH);
+    }
+    if (recevTrainColor == "red") {     // 運行に遅延がある時
+        blackCounter = 0;
+        digitalWrite(13, HIGH);
+        digitalWrite(14, LOW);
+    }
+    if (recevTrainColor == "black") {   // 4回同じ情報を取得した場合LEDを消灯
+        if (blackCounter < 3) {
+          blackCounter++;
+        } else {
+          digitalWrite(13, LOW);
+          digitalWrite(14, LOW);
+        }
+
+    }
+}
+
+// 天気予報をLEDの点灯で通知
+void onWetherLight(String recevWetherColor) {
+    if (recevWetherColor == "blue") {   // 雨または雪の場合
+        digitalWrite(12, HIGH);
+    }
+    if (recevWetherColor == "black") {  // それ以外の場合
+        digitalWrite(12, LOW);
+    }
+}
+
 
 uint32_t x=0;
 
 void loop() {
     MQTT_connect();
     String recevIrData;
+    String recevTrainColor;
+    String recevWetherColor;
 
     // topicを監視しsubscriptionのmessageを受け取る
     Adafruit_MQTT_Subscribe *subscription;
@@ -158,14 +197,14 @@ void loop() {
         if (subscription == &trainColorSubscriber) {
             Serial.print(F("Got: "));
             Serial.println((char *)trainColorSubscriber.lastread);
-            recevIrData = String((char *)trainColorSubscriber.lastread);  // subscriptionのmessageを受け取る
-
+            recevTrainColor = String((char *)trainColorSubscriber.lastread);  // subscriptionのmessageを受け取る
+            onTrainLight(recevTrainColor);
         }
         if (subscription == &wetherColorSubscriber) {
             Serial.print(F("Got: "));
             Serial.println((char *)wetherColorSubscriber.lastread);
-            recevIrData = String((char *)wetherColorSubscriber.lastread); // subscriptionのmessageを受け取る
-
+            recevWetherColor = String((char *)wetherColorSubscriber.lastread); // subscriptionのmessageを受け取る
+            onWetherLight(recevWetherColor);
         }
     }
 
