@@ -17,15 +17,20 @@ class RecipeModalHandler(tornado.web.RequestHandler):
 class IndexHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self):
-        titles = ["1 Item1", "2 Item2", "3 Item3", "4 Item4", "5 Item5", "6 Item6"]
+        f = open("recipeData.json", "r", encoding='utf-8')       #前回のツイートを読み込む
+        recipeDataJson = json.loads(f.read())
+        f.close()
+        #print (len(json.loads(recipeDataJson)))
+
+        recipeNmaeList = []
+        for i in range(len(recipeDataJson)) :
+            recipeNmaeList.append((recipeDataJson[i]["recipeName"]))
+        titles = recipeNmaeList
         self.render("index.html", titles=titles)
 
 class SendWebSocket(tornado.websocket.WebSocketHandler):
     #on_message -> receive data
     #write_message -> send data
-
-    data = [{'recipeName' : 'recipeName1', 'thisData' : 'thisData1', 'thatData' : 'thatData1'}, {'recipeName' : 'recipeName2', 'thisData' : 'thisData2', 'thatData' : 'thatData2'}]
-
 
     def open(self):
         self.i = 0
@@ -36,16 +41,46 @@ class SendWebSocket(tornado.websocket.WebSocketHandler):
     #クライアントからメッセージが送られてくると呼び出す
     def on_message(self, message):
         print (message)
-        if ('requestMessage' in str(message)) :
-            recipeData = {
-                "recipeNum" : message[14],
-                "thisData" : "人感センサが反応",
-                "thatData" : "モータを回す"
-            }
-            self.write_message(recipeData)
+
+        #リクエストを受けたレシピデータを送信
+        if ('requestRecipeData' in str(message)) :
+            recipeName = str(message).replace('requestRecipeData', '')
+            f = open("recipeData.json", "r", encoding='utf-8')
+            recipeDataJson = json.loads(f.read())
+            f.close()
+            for i in range(len(recipeDataJson)) :
+                if (recipeDataJson[i]["recipeName"] == recipeName) :
+                    break
+            print (json.dumps(recipeDataJson[i], sort_keys=True, indent=2, ensure_ascii=False))
+            self.write_message(recipeDataJson[i])
+
+        #レシピ追加のボタンが押された時に空のレシピデータを送信
+        elif ('addNewRecipe' in str(message)) :
+            newRecipeDataJson = {
+                    "recipeName" : "",
+                    "recipeId" : 0,
+                    "actionDataIf" : "-",
+                    "actionDataThen" : "-"
+                }
+            self.write_message(newRecipeDataJson)
+
+        #レシピが変更・追加された時にレシピデータを外部ファイルrecipeData.jsonに出力
         elif ('{' in str(message)) :
             newRecipeData = json.loads(message)
             print (json.dumps(newRecipeData, sort_keys=True, indent=2, ensure_ascii=False))
+            f = open("recipeData.json", "r", encoding='utf-8')
+            recipeDataJson = json.loads(f.read())
+            #for i in range(len(recipeDataJson)) :
+            #    if (recipeDataJson[i]["recipeName"] == str(newRecipeData.recipeName) and recipeDataJson[i]["actionDataIf"] == str(newRecipeData.actionDataIf) and recipeDataJson[i]["actionDataThen"] == str(newRecipeData.actionDataThen)) :
+            #f.write(recipeData.json)
+            f.close()
+            if (newRecipeData["recipeId"] == 0) :
+                print(0)
+            elif (newRecipeData["recipeId"] <= int(recipeDataJson[len(recipeDataJson)-1]["recipeId"])) :
+                print(1)
+            self.write_message(newRecipeData)
+
+        #ネットワークリモコンのリクエストをMQTTブローカにpubを送信
         else :
             cmd = "mosquitto_pub -h 192.168.1.32 -t \"test\" -m \"" + message + "\""
             print (cmd)

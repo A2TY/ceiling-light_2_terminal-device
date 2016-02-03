@@ -1,29 +1,44 @@
 <!DOCTYPE html>
 <html lang="ja">
 <title>リモコン</title>
-    <script language="javascript">
-      var ws = new WebSocket("ws://192.168.1.32:8080/ws");
-      //ws.onopen = function() {
-        //ws.send("Hello, world");
-      //};
-      //ws.onmessage = function (evt) {
-        //document.write("<strong>" + evt.data + "</strong>");
-      //};
-      function sendMessage(value) {
-        ws.send(value);
-      }
+  <script language="javascript">
+    var ws = new WebSocket("ws://192.168.1.32:8080/ws");
+    //ws.onopen = function() {
+      //ws.send("Hello, world");
+    //};
+    //ws.onmessage = function (evt) {
+      //document.write("<strong>" + evt.data + "</strong>");
+    //};
 
-      function mergeSelectData(recipeId) {
-        if (recipeId == "newRecipe") {
-          var message = {
-            recipeName : $("#recipeName").val(),
-            thisData : $("#ifSelect option:selected").text(),
-            thatData : $("#thenSelect option:selected").text()
-          };
-          ws.send(JSON.stringify(message));
+    //サーバへリクエストを送信
+    function sendMessage(value) {
+      ws.send(value);
+    }
+
+    //サーバへレシピデータをJSONデータで送信
+    function mergeSelectData(recipeId) {
+      if (recipeId == "newRecipe") {
+        var message = {
+          recipeName : $("#recipeName").val(),
+          recipeId : parseInt($("#recipeId").val()),
+          actionDataIf : $("#selectActionIf option:selected").text(),
+          actionDataThen : $("#selectActionThen option:selected").text()
         };
-      }
-    </script>
+        ws.send(JSON.stringify(message));
+      };
+    }
+
+    //サーバからレシピデータをJSONで受け取る
+    ws.onmessage = function (evt) {
+      //var data = evt.data
+      var data = JSON.parse(evt.data);
+      //alert(data.age);
+      document.getElementById('recipeName').value=data.recipeName;
+      document.getElementById('recipeId').value=data.recipeId;
+      document.getElementById('selectActionIf').value=data.actionDataIf;
+      document.getElementById('selectActionThen').value=data.actionDataThen;
+    };
+  </script>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -47,7 +62,6 @@
         <li class="col-xs-6"><a href="#tab2" data-toggle="tab">レシピ</a></li>
       </ul>
     </div>
-
     <div class="tab-content">
       <!--TVリモコンタブ-->
       <div class="tab-pane active" id="tab1">
@@ -115,29 +129,48 @@
       <div class="tab-pane" id="tab2">
         <div class="row">
           <div class="col-xs-4"></div>
-          <button type="button" class="btn btn-default col-xs-4">
-            <a href="#" data-toggle="modal" data-target="#exampleModal" data-whatever="パラメーター１">
+          <a href="#" data-toggle="modal" data-target="#recipeModal" data-whatever="レシピ追加">
+            <button type="button" class="btn btn-default col-xs-4" onclick="sendMessage('addNewRecipe')">
               <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>レシピ追加
-            </a>
-          </button>
+            </button>
+          </a>
           <div class="col-xs-4"></div>
-        </div>
-          <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          </div>
+          {% for title in titles %}
+            <p>
+              <div class="dropdown">
+                <button class="btn btn-success dropdown-toggle center-block" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" onclick="sendMessage('requestRecipeData{{ escape(title) }}')">
+                  {{ escape(title) }}
+                  <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+                  <li><a href="#" data-toggle="modal" data-target="#recipeModal" data-whatever="レシピ編集">編集</a></li>
+                  <li><a href="#">実行</a></li>
+                  <li role="separator" class="divider"></li>
+                  <li><a href="#">削除</a></li>
+                </ul>
+              </div>
+            </p>
+          {% end %}
+          <div class="modal fade" id="recipeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal">
                     <span aria-hidden="true">&#215;</span><span class="sr-only">閉じる</span>
                   </button>
-                  <h4 class="modal-title">レシピ追加</h4>
+                  <h4 class="modal-title" id="exampleModalLabel">レシピ追加</h4>
                 </div><!-- /modal-header -->
                 <div class="modal-body">
-                  <input type="text" class="form-control" id="recipeName" placeholder="レシピ名">
+                  <p>
+                    <input type="text" class="form-control" id="recipeName" placeholder="レシピ名">
+                  </p>
+                  <input type="hidden" class="form-control" id="recipeId">
                   <div class="row">
                     <div class="col-sm-6">
                       <h5 class="col-sm-2">If</h5>
                       <div class="col-sm-10">
-                        <select class="form-control" id="ifSelect" value="-">
+                        <select class="form-control" id="selectActionIf" value="-">
                           <option>-</option>
                           <option>人感センサが反応</option>
                           <option>温湿度センサが反応</option>
@@ -149,7 +182,7 @@
                     <div class="col-sm-6">
                       <h5 class="col-sm-2">then</h5>
                       <div class="col-sm-10">
-                        <select class="form-control" id="thenSelect" value="-">
+                        <select class="form-control" id="selectActionThen" value="-">
                           <option>-</option>
                           <option>テレビをON</option>
                           <option>モータを回す</option>
@@ -167,84 +200,10 @@
               </div>
             </div>
           </div>
-
-          {% for title in titles %}
-            <div class="row">
-              <p>
-                <div class="col-xs-4"></div>
-                <div class="dropdown">
-                  <button class="btn btn-success dropdown-toggle col-xs-4" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" onclick="  sendMessage('requestMessage{{ escape(title) }}')">
-                    {{ escape(title) }}
-                    <span class="caret"></span>
-                  </button>
-                  <ul class="dropdown-menu pull-right" aria-labelledby="dropdownMenu1">
-                    <li><a href="#" data-toggle="modal" data-target="#exampleModal{{ escape(title[0]) }}" data-whatever="パラメーター１">編集</a></li>
-                    <li><a href="#">実行</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li><a href="#">削除</a></li>
-                  </ul>
-                </div>
-                <div class="col-xs-4"></div>
-              </p>
-            </div>
-            <div class="modal fade" id="exampleModal{{ escape(title[0]) }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">
-                      <span aria-hidden="true">&#215;</span><span class="sr-only">閉じる</span>
-                    </button>
-                    <h4 class="modal-title">{{ escape(title) }}</h4>
-                  </div><!-- /modal-header -->
-                  <div class="modal-body">
-                    <div class="row">
-                      <div class="col-sm-6">
-                        <h5 class="col-sm-2">If</h5>
-                        <div class="col-sm-10">
-                          <select class="form-control" id="ifSelect{{ escape(title[0]) }}">
-                            <option>-</option>
-                            <option>人感センサが反応</option>
-                            <option>温湿度センサが反応</option>
-                            <option>光センサが反応</option>
-                            <option>音センサが反応</option>
-                          </select>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <h5 class="col-sm-2">then</h5>
-                        <div class="col-sm-10">
-                          <select class="form-control" id="thenSelect{{ escape(title[0]) }}">
-                            <option>-</option>
-                            <option>テレビをON</option>
-                            <option>モータを回す</option>
-                            <option>LEDを点灯させる</option>
-                            <option>音を鳴らす</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
-                    <button type="button" class="btn btn-primary">変更を保存</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          {% end %}
-
-          <script type="text/javascript">
-            ws.onmessage = function (evt) {
-              //var data = evt.data
-              var data = JSON.parse(evt.data);
-              //alert(data.age);
-              document.getElementById('ifSelect' + data.recipeNum).value=data.thisData;
-              document.getElementById('thenSelect' + data.recipeNum).value=data.thatData;
-            };
-          </script>
         </div>
       </div>
     </div>
+
 
     <header style="background-color: #777;" class="container">ヘッダー</header>
       <section class="container">
@@ -258,9 +217,19 @@
     <footer style="background-color: #777;" class="container">フッター</footer>
 
 
-            <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="{{ "https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js" }}"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="{{ static_url("js/bootstrap.min.js") }}"></script>
+    <script type="text/javascript">
+      $('#recipeModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) //モーダルを呼び出すときに使われたボタンを取得
+        var recipient = button.data('whatever') //data-whatever の値を取得
+        //Ajaxの処理はここに
+        var modal = $(this)  //モーダルを取得
+        modal.find('.modal-title').text(recipient) //モーダルのタイトルに値を表示
+        modal.find('.modal-body input#recipient-name').val(recipient) //inputタグにも表示
+      })
+    </script>
   </body>
 </html>
