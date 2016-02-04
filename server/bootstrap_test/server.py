@@ -17,10 +17,9 @@ class RecipeModalHandler(tornado.web.RequestHandler):
 class IndexHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     def get(self):
-        f = open("recipeData.json", "r", encoding='utf-8')       #前回のツイートを読み込む
+        f = open("recipeData.json", "r", encoding='utf-8')
         recipeDataJson = json.loads(f.read())
         f.close()
-        #print (len(json.loads(recipeDataJson)))
 
         recipeNmaeList = []
         for i in range(len(recipeDataJson)) :
@@ -70,15 +69,44 @@ class SendWebSocket(tornado.websocket.WebSocketHandler):
             print (json.dumps(newRecipeData, sort_keys=True, indent=2, ensure_ascii=False))
             f = open("recipeData.json", "r", encoding='utf-8')
             recipeDataJson = json.loads(f.read())
-            #for i in range(len(recipeDataJson)) :
-            #    if (recipeDataJson[i]["recipeName"] == str(newRecipeData.recipeName) and recipeDataJson[i]["actionDataIf"] == str(newRecipeData.actionDataIf) and recipeDataJson[i]["actionDataThen"] == str(newRecipeData.actionDataThen)) :
-            #f.write(recipeData.json)
             f.close()
+
+            #新規レシピをrecipeData.jsonに出力
             if (newRecipeData["recipeId"] == 0) :
                 print(0)
+                newRecipeData["recipeId"] = recipeDataJson[len(recipeDataJson)-1]["recipeId"] + 1
+                newRecipeDataList = recipeDataJson
+                newRecipeDataList.append(newRecipeData)
+                print (json.dumps(newRecipeData, sort_keys=True, indent=2, ensure_ascii=False))
+                with open('recipeData.json', 'w') as f:
+                    json.dump(newRecipeDataList, f, sort_keys=True, indent=2, ensure_ascii=False)
+
+            #編集したレシピをrecipeData.jsonに出力
             elif (newRecipeData["recipeId"] <= int(recipeDataJson[len(recipeDataJson)-1]["recipeId"])) :
                 print(1)
+                newRecipeDataList = []
+                for i in range(len(recipeDataJson)) :
+                    if (newRecipeData["recipeId"] == recipeDataJson[i]["recipeId"]) :
+                        newRecipeDataList.append(newRecipeData)
+                    else :
+                        newRecipeDataList.append(recipeDataJson[i])
+                with open('recipeData.json', 'w') as f:
+                    json.dump(newRecipeDataList, f, sort_keys=True, indent=2, ensure_ascii=False)
+
             self.write_message(newRecipeData)
+
+        elif ('deleteRecipe' in str(message)) :
+            deleteRecipeId = int(str(message).replace('deleteRecipe', ''))
+            newRecipeDataList = []
+            f = open("recipeData.json", "r", encoding='utf-8')
+            recipeDataJson = json.loads(f.read())
+            f.close()
+            for i in range(len(recipeDataJson)) :
+                if (deleteRecipeId != recipeDataJson[i]["recipeId"]) :
+                    newRecipeDataList.append(recipeDataJson[i])
+            with open('recipeData.json', 'w') as f:
+                json.dump(newRecipeDataList, f, sort_keys=True, indent=2, ensure_ascii=False)
+
 
         #ネットワークリモコンのリクエストをMQTTブローカにpubを送信
         else :

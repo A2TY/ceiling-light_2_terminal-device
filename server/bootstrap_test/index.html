@@ -16,8 +16,8 @@
     }
 
     //サーバへレシピデータをJSONデータで送信
-    function mergeSelectData(recipeId) {
-      if (recipeId == "newRecipe") {
+    function mergeSelectData(request) {
+      if (request == "newRecipe") {
         var message = {
           recipeName : $("#recipeName").val(),
           recipeId : parseInt($("#recipeId").val()),
@@ -26,6 +26,10 @@
         };
         ws.send(JSON.stringify(message));
       };
+    }
+
+    function deleteRecipe(request) {
+      ws.send("deleteRecipe" + $("#recipeId").val())
     }
 
     //サーバからレシピデータをJSONで受け取る
@@ -68,59 +72,80 @@
         <div class="row">
           <div class="col-sm-6">
             <p>
-              <div class="col-xs-12"></div>
+              <div class="row">
+                <div class="col-xs-12"></div>
+              </div>
             </p>
-            <p>
+            <div class="row">
               <div class="col-xs-8"></div>
-                <button type="button" onclick="sendMessage('power')" class="btn btn-danger col-xs-4">
+                <button type="button" onclick="sendMessage('power')" class="btn btn-danger btn-lg col-xs-4">
                   <span class="glyphicon glyphicon-off" aria-hidden="true"></span>Power
                 </button>
+            </div>
+            <p>
+              <div class="row">
+                <div class="col-xs-12"></div>
+              </div>
             </p>
             <p>
-              <button type="button" onclick="sendMessage('1ch')" class="btn btn-default col-xs-4">1ch</button>
-              <button type="button" onclick="sendMessage('2ch')" class="btn btn-default col-xs-4">2ch</button>
-              <button type="button" onclick="sendMessage('3ch')" class="btn btn-default col-xs-4">3ch</button>
+              <div class="row">
+                <button type="button" onclick="sendMessage('1ch')" class="btn btn-default btn-lg col-xs-4">1ch</button>
+                <button type="button" onclick="sendMessage('2ch')" class="btn btn-default btn-lg col-xs-4">2ch</button>
+                <button type="button" onclick="sendMessage('3ch')" class="btn btn-default btn-lg col-xs-4">3ch</button>
+              </div>
             </p>
             <p>
-              <button type="button" onclick="sendMessage('4ch')" class="btn btn-default col-xs-4">4ch</button>
-              <button type="button" onclick="sendMessage('5ch')" class="btn btn-default col-xs-4">5ch</button>
-              <button type="button" onclick="sendMessage('6ch')" class="btn btn-default col-xs-4">6ch</button>
+              <div class="row">
+                <button type="button" onclick="sendMessage('4ch')" class="btn btn-default btn-lg col-xs-4">4ch</button>
+                <button type="button" onclick="sendMessage('5ch')" class="btn btn-default btn-lg col-xs-4">5ch</button>
+                <button type="button" onclick="sendMessage('6ch')" class="btn btn-default btn-lg col-xs-4">6ch</button>
+              </div>
             </p>
             <p>
-              <button type="button" onclick="sendMessage('7ch')" class="btn btn-default col-xs-4">7ch</button>
-              <button type="button" onclick="sendMessage('8ch')" class="btn btn-default col-xs-4">8ch</button>
-              <button type="button" onclick="sendMessage('9ch')" class="btn btn-default col-xs-4">9ch</button>
+              <div class="row">
+                <button type="button" onclick="sendMessage('7ch')" class="btn btn-default btn-lg col-xs-4">7ch</button>
+                <button type="button" onclick="sendMessage('8ch')" class="btn btn-default btn-lg col-xs-4">8ch</button>
+                <button type="button" onclick="sendMessage('9ch')" class="btn btn-default btn-lg col-xs-4">9ch</button>
+              </div>
             </p>
             <p>
-              <button type="button" onclick="sendMessage('10ch')" class="btn btn-default col-xs-4">10ch</button>
-              <button type="button" onclick="sendMessage('11ch')" class="btn btn-default col-xs-4">11ch</button>
-              <button type="button" onclick="sendMessage('12ch')" class="btn btn-default col-xs-4">12ch</button>
+              <div class="row">
+                <button type="button" onclick="sendMessage('10ch')" class="btn btn-default btn-lg col-xs-4">10ch</button>
+                <button type="button" onclick="sendMessage('11ch')" class="btn btn-default btn-lg col-xs-4">11ch</button>
+                <button type="button" onclick="sendMessage('12ch')" class="btn btn-default btn-lg col-xs-4">12ch</button>
+              </div>
             </p>
           </div>
           <div class="col-sm-6">
             <p>
-              <div class="col-xs-12"></div>
+              <div class="row">
+                <div class="col-xs-12"></div>
+              </div>
             </p>
             <p>
-              <button type="button" onclick="sendMessage('ch_up')" class="btn btn-default col-xs-4">
-                <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>UP
-              </button>
-              <div class="col-xs-4"></div>
-              <button type="button" onclick="sendMessage('vol_up')" class="btn btn-default col-xs-4">
-                <span class="glyphicon glyphicon-volume-up" aria-hidden="true"></span>UP
-              </button>
+              <div class="row">
+                <button type="button" onclick="sendMessage('ch_up')" class="btn btn-default btn-lg col-xs-4">
+                  <span class="glyphicon glyphicon-triangle-top" aria-hidden="true"></span>UP
+                </button>
+                <button type="button" onclick="sendMessage('vol_up')" class="btn btn-default btn-lg col-xs-4 col-xs-offset-4">
+                  <span class="glyphicon glyphicon-volume-up" aria-hidden="true"></span>UP
+                </button>
+              </div>
             </p>
             <p>
-              <div class="col-xs-12"></div>
+              <div class="row">
+                <div class="col-xs-12"></div>
+              </div>
             </p>
             <p>
-              <button type="button" onclick="sendMessage('ch_down')" class="btn btn-default col-xs-4">
-                <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>DOWN
-              </button>
-              <div class="col-xs-4"></div>
-              <button type="button" onclick="sendMessage('vol_down')" class="btn btn-default col-xs-4">
-                <span class="glyphicon glyphicon-volume-down" aria-hidden="true"></span>DOWN
-              </button>
+              <div class="row">
+                <button type="button" onclick="sendMessage('ch_down')" class="btn btn-default btn-lg col-xs-4">
+                  <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>DOWN
+                </button>
+                <button type="button" onclick="sendMessage('vol_down')" class="btn btn-default btn-lg col-xs-4 col-xs-offset-4">
+                  <span class="glyphicon glyphicon-volume-down" aria-hidden="true"></span>DOWN
+                </button>
+              </div>
             </p>
           </div>
         </div>
@@ -128,75 +153,98 @@
       <!--レシピタブ-->
       <div class="tab-pane" id="tab2">
         <div class="row">
-          <div class="col-xs-4"></div>
+        <p>
           <a href="#" data-toggle="modal" data-target="#recipeModal" data-whatever="レシピ追加">
-            <button type="button" class="btn btn-default col-xs-4" onclick="sendMessage('addNewRecipe')">
+            <button type="button" class="btn btn-default col-xs-4 col-xs-offset-4" onclick="sendMessage('addNewRecipe')">
               <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>レシピ追加
             </button>
           </a>
-          <div class="col-xs-4"></div>
-          </div>
-          {% for title in titles %}
-            <p>
-              <div class="dropdown">
-                <button class="btn btn-success dropdown-toggle center-block" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" onclick="sendMessage('requestRecipeData{{ escape(title) }}')">
-                  {{ escape(title) }}
-                  <span class="caret"></span>
+          </p>
+        </div>
+        {% for title in titles %}
+          <p>
+            <div class="dropdown">
+              <button class="btn btn-success dropdown-toggle center-block" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" onclick="sendMessage('requestRecipeData{{ escape(title) }}')">
+                {{ escape(title) }}
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
+                <li><a href="#" data-toggle="modal" data-target="#recipeModal" data-whatever="レシピ編集">編集</a></li>
+                <li><a href="#">実行</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#" data-toggle="modal" data-target="#deleteRecipeModal">削除</a></li>
+              </ul>
+            </div>
+          </p>
+        {% end %}
+        <div class="modal fade" id="recipeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                  <span aria-hidden="true">&#215;</span><span class="sr-only">閉じる</span>
                 </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
-                  <li><a href="#" data-toggle="modal" data-target="#recipeModal" data-whatever="レシピ編集">編集</a></li>
-                  <li><a href="#">実行</a></li>
-                  <li role="separator" class="divider"></li>
-                  <li><a href="#">削除</a></li>
-                </ul>
-              </div>
-            </p>
-          {% end %}
-          <div class="modal fade" id="recipeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal">
-                    <span aria-hidden="true">&#215;</span><span class="sr-only">閉じる</span>
-                  </button>
-                  <h4 class="modal-title" id="exampleModalLabel">レシピ追加</h4>
-                </div><!-- /modal-header -->
-                <div class="modal-body">
-                  <p>
-                    <input type="text" class="form-control" id="recipeName" placeholder="レシピ名">
-                  </p>
-                  <input type="hidden" class="form-control" id="recipeId">
-                  <div class="row">
-                    <div class="col-sm-6">
-                      <h5 class="col-sm-2">If</h5>
-                      <div class="col-sm-10">
-                        <select class="form-control" id="selectActionIf" value="-">
-                          <option>-</option>
-                          <option>人感センサが反応</option>
-                          <option>温湿度センサが反応</option>
-                          <option>光センサが反応</option>
-                          <option>音センサが反応</option>
-                        </select>
-                      </div>
+                <h4 class="modal-title" id="exampleModalLabel">レシピ追加</h4>
+              </div><!-- /modal-header -->
+              <div class="modal-body">
+                <p>
+                  <input type="text" class="form-control" id="recipeName" placeholder="レシピ名">
+                </p>
+                <input type="hidden" class="form-control" id="recipeId">
+                <div class="row">
+                  <div class="col-sm-6">
+                    <h5 class="col-sm-2">If</h5>
+                    <div class="col-sm-10">
+                      <select class="form-control" id="selectActionIf" value="-">
+                        <option>-</option>
+                        <option>人感センサが反応</option>
+                        <option>温湿度センサが反応</option>
+                        <option>光センサが反応</option>
+                        <option>音センサが反応</option>
+                      </select>
                     </div>
-                    <div class="col-sm-6">
-                      <h5 class="col-sm-2">then</h5>
-                      <div class="col-sm-10">
-                        <select class="form-control" id="selectActionThen" value="-">
-                          <option>-</option>
-                          <option>テレビをON</option>
-                          <option>モータを回す</option>
-                          <option>LEDを点灯させる</option>
-                          <option>音を鳴らす</option>
-                        </select>
-                      </div>
+                  </div>
+                  <div class="col-sm-6">
+                    <h5 class="col-sm-2">then</h5>
+                    <div class="col-sm-10">
+                      <select class="form-control" id="selectActionThen" value="-">
+                        <option>-</option>
+                        <option>テレビをON</option>
+                        <option>モータを回す</option>
+                        <option>LEDを点灯させる</option>
+                        <option>音を鳴らす</option>
+                      </select>
                     </div>
                   </div>
                 </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
-                  <button type="button" class="btn btn-primary" onclick="mergeSelectData('newRecipe')">保存</button>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                <button type="button" class="btn btn-primary" onclick="mergeSelectData('newRecipe')" data-dismiss="modal">保存</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="deleteRecipeModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                  <span aria-hidden="true">&#215;</span><span class="sr-only">閉じる</span>
+                </button>
+                <h4 class="modal-title" id="exampleModalLabel">レシピの削除</h4>
+              </div><!-- /modal-header -->
+              <div class="modal-body">
+                <div class="alert alert-danger" role="alert">
+                  <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+                  <span class="sr-only">Error:</span>
+                  この動作は取り消せません．本当に削除しますか？
                 </div>
+                <input type="hidden" class="form-control" id="recipeId">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
+                <button type="button" class="btn btn-danger" onclick="deleteRecipe('deleteRecipe')" data-dismiss="modal">削除</button>
               </div>
             </div>
           </div>
@@ -204,17 +252,6 @@
       </div>
     </div>
 
-
-    <header style="background-color: #777;" class="container">ヘッダー</header>
-      <section class="container">
-        <!-- Bootstrapのグリッドシステムclass="row"で開始 -->
-        <div class="row">
-          <!-- グリッドシステムとは：合計12分割 -->
-          <div class="col-sm-6" style="background-color: blue;">青</div>
-          <div class="col-sm-6" style="background-color: red;">赤</div>
-        </div>
-      </section>
-    <footer style="background-color: #777;" class="container">フッター</footer>
 
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
