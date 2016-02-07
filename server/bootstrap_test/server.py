@@ -63,6 +63,13 @@ class SendWebSocket(tornado.websocket.WebSocketHandler):
                 }
             self.write_message(newRecipeDataJson)
 
+        #レシピ実行ボタンが押された時
+        elif ('actionRecipe' in str(message)) :
+            actionRecipeId = str(message).replace('actionRecipe', '')
+            cmd = "mosquitto_pub -h 192.168.1.4 -t \"/client/actionRecipe\" -m \"" + actionRecipeId + "\""
+            print (cmd)
+            os.system(cmd)
+
         #レシピが変更・追加された時にレシピデータを外部ファイルrecipeData.jsonに出力
         elif ('{' in str(message)) :
             newRecipeData = json.loads(message)
@@ -74,7 +81,10 @@ class SendWebSocket(tornado.websocket.WebSocketHandler):
             #新規レシピをrecipeData.jsonに出力
             if (newRecipeData["recipeId"] == 0) :
                 print(0)
-                newRecipeData["recipeId"] = recipeDataJson[len(recipeDataJson)-1]["recipeId"] + 1
+                try:
+                    newRecipeData["recipeId"] = recipeDataJson[len(recipeDataJson)-1]["recipeId"] + 1
+                except:
+                    newRecipeData["recipeId"] = 1
                 newRecipeDataList = recipeDataJson
                 newRecipeDataList.append(newRecipeData)
                 print (json.dumps(newRecipeData, sort_keys=True, indent=2, ensure_ascii=False))
@@ -90,11 +100,14 @@ class SendWebSocket(tornado.websocket.WebSocketHandler):
                         newRecipeDataList.append(newRecipeData)
                     else :
                         newRecipeDataList.append(recipeDataJson[i])
-                with open('recipeData.json', 'w') as f:
+                with open('recipeData.json', 'w') as f :
                     json.dump(newRecipeDataList, f, sort_keys=True, indent=2, ensure_ascii=False)
 
-            self.write_message(newRecipeData)
+            cmd = "mosquitto_pub -h 192.168.1.4 -t \"/client/recipeData\" -m \"change\""
+            print (cmd)
+            os.system(cmd)
 
+        #レシピの削除
         elif ('deleteRecipe' in str(message)) :
             deleteRecipeId = int(str(message).replace('deleteRecipe', ''))
             newRecipeDataList = []
@@ -106,11 +119,14 @@ class SendWebSocket(tornado.websocket.WebSocketHandler):
                     newRecipeDataList.append(recipeDataJson[i])
             with open('recipeData.json', 'w') as f:
                 json.dump(newRecipeDataList, f, sort_keys=True, indent=2, ensure_ascii=False)
+            cmd = "mosquitto_pub -h 192.168.1.4 -t \"/client/recipeData\" -m \"change\""
+            print (cmd)
+            os.system(cmd)
 
 
         #ネットワークリモコンのリクエストをMQTTブローカにpubを送信
         else :
-            cmd = "mosquitto_pub -h 192.168.1.32 -t \"test\" -m \"" + message + "\""
+            cmd = "mosquitto_pub -h 192.168.1.4 -t \"/client/tvIr\" -m \"" + message + "\""
             print (cmd)
             os.system(cmd)
 

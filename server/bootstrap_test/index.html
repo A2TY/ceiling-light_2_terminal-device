@@ -2,7 +2,7 @@
 <html lang="ja">
 <title>リモコン</title>
   <script language="javascript">
-    var ws = new WebSocket("ws://192.168.1.32:8080/ws");
+    var ws = new WebSocket("ws://192.168.1.4:8080/ws");
     //ws.onopen = function() {
       //ws.send("Hello, world");
     //};
@@ -28,8 +28,13 @@
       };
     }
 
-    function deleteRecipe(request) {
-      ws.send("deleteRecipe" + $("#recipeId").val())
+    function requestAction(request) {
+      if (request == "deleteRecipe") {
+        ws.send("deleteRecipe" + $("#recipeId").val())
+      }
+      if (request == "actionRecipe") {
+        ws.send("actionRecipe" + $("#recipeId").val())
+      }
     }
 
     //サーバからレシピデータをJSONで受け取る
@@ -134,11 +139,6 @@
             </p>
             <p>
               <div class="row">
-                <div class="col-xs-12"></div>
-              </div>
-            </p>
-            <p>
-              <div class="row">
                 <button type="button" onclick="sendMessage('ch_down')" class="btn btn-default btn-lg col-xs-4">
                   <span class="glyphicon glyphicon-triangle-bottom" aria-hidden="true"></span>DOWN
                 </button>
@@ -170,7 +170,7 @@
               </button>
               <ul class="dropdown-menu" aria-labelledby="dropdownMenu">
                 <li><a href="#" data-toggle="modal" data-target="#recipeModal" data-whatever="レシピ編集">編集</a></li>
-                <li><a href="#">実行</a></li>
+                <li><a href="#" onclick="requestAction('actionRecipe')">実行</a></li>
                 <li role="separator" class="divider"></li>
                 <li><a href="#" data-toggle="modal" data-target="#deleteRecipeModal">削除</a></li>
               </ul>
@@ -198,9 +198,10 @@
                       <select class="form-control" id="selectActionIf" value="-">
                         <option>-</option>
                         <option>人感センサが反応</option>
-                        <option>温湿度センサが反応</option>
-                        <option>光センサが反応</option>
-                        <option>音センサが反応</option>
+                        <option>温度センサが反応</option>
+                        <option>湿度センサが反応</option>
+                        <option>加速度センサが反応</option>
+                        <option>スイッチが押される</option>
                       </select>
                     </div>
                   </div>
@@ -244,7 +245,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">キャンセル</button>
-                <button type="button" class="btn btn-danger" onclick="deleteRecipe('deleteRecipe')" data-dismiss="modal">削除</button>
+                <button type="button" class="btn btn-danger" onclick="requestAction('deleteRecipe')" data-dismiss="modal">削除</button>
               </div>
             </div>
           </div>
