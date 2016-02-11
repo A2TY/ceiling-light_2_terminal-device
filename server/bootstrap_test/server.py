@@ -59,7 +59,9 @@ class SendWebSocket(tornado.websocket.WebSocketHandler):
                     "recipeName" : "",
                     "recipeId" : 0,
                     "actionDataIf" : "-",
-                    "actionDataThen" : "-"
+                    "actionDataThen" : "-",
+                    "valueIf" : [""],
+                    "valueThen" : [""]
                 }
             self.write_message(newRecipeDataJson)
 
