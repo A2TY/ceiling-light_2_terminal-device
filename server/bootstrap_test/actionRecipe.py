@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+import re
 import json
 import paho.mqtt.client as mqtt
 
-host = '___ADDRESS___'#'___ADDRESS___'
-port = ___PORT___#'___PORT___'
+host = '192.168.1.32'#'___ADDRESS___'
+port = 1883#'___PORT___'
 
 #レシピデータを格納する空のjsonデータ
 recipeDataList = {
@@ -48,27 +49,30 @@ def on_connect(client, userdata, flags, respons_code):
 #メッセージをSubした時に実行する
 def on_message(client, userdata, msg):
     global recipeDataList
+    deletePattern = re.compile('[\[\]\'\,\ ]')
 
     #レシピデータが更新された時に外部ファイルrecipeData.jsonからレシピデータを取得し直す
     if ('recipeData' in str(msg.topic)):
         print ('recipeData')
         recipeDataList = transfórmTopicName(openRecipeDataFile())
+
     #レシピ管理サイトでレシピ実行ボタンが押された時に登録されたactionDataThenをPubする
     elif ('actionRecipe' in str(msg.topic)):
         print ('actionRecipe')
         for i in range(len(recipeDataList)):
             if (recipeDataList[i]["recipeId"] == int(msg.payload)):
-                client.publish('/server/' + recipeDataList[i]["actionDataThen"], str(recipeDataList[i]["valueThen"][0]))
+                client.publish('/server/' + recipeDataList[i]["actionDataThen"], deletePattern.sub('', str(recipeDataList[i]["valueThen"][0])))
                 break
+
     #Subした内容に応じて登録されたactionDataThenをPubする
     else :
         for i in range(len(recipeDataList)):
             if (recipeDataList[i]["actionDataIf"] in str(msg.topic)):
                 if (recipeDataList[i]["actionDataIf"] == 'temperature' or recipeDataList[i]["actionDataIf"] == 'humidity'):
                     if (int(recipeDataList[i]["valueIf"][0][0]) >= int(msg.payload) and int(recipeDataList[i]["valueIf"][0][1]) <= int(msg.payload)):
-                        client.publish('/server/' + recipeDataList[i]["actionDataThen"], str(recipeDataList[i]["valueThen"][0]))
+                        client.publish('/server/' + recipeDataList[i]["actionDataThen"], deletePattern.sub('', str(recipeDataList[i]["valueThen"][0])))
                 else :
-                    client.publish('/server/' + recipeDataList[i]["actionDataThen"], str(recipeDataList[i]["valueThen"][0]))
+                    client.publish('/server/' + recipeDataList[i]["actionDataThen"], deletePattern.sub('', str(recipeDataList[i]["valueThen"][0])))
                 print ('other')
 
 

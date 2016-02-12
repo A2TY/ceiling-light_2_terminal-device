@@ -11,6 +11,7 @@
 #include <Adafruit_MQTT.h>
 #include <Adafruit_MQTT_Client.h>
 #include <IRremoteESP8266.h>
+#include <String.h>
 
 /************************* WiFi Access Point *********************************/
 
@@ -76,57 +77,82 @@ void setup() {
 
 // TVに赤外線送信
 void sendIrData(String data) {
-    if (data == "power") {
+  for (int i = 0; i <= data.length(); i++) {
+    String dataS = data.substring(i, i+1);
+    char dataC[32];
+    dataS.toCharArray(dataC, 32);  //char型に変換
+    switch (dataC[0]) {
+      case 'p':
+        Serial.println("p");
         irsend.sendNEC(0x2FD48B7, 32);
-    }
-    if (data == "1ch") {
+        break;
+      case '1':
+        Serial.println("1");
         irsend.sendNEC(0x2FD807F, 32);
-    }
-    if (data == "2ch") {
+        break;
+      case '2':
+        Serial.println("2");
         irsend.sendNEC(0x2FD40BF, 32);
-    }
-    if (data == "3ch") {
+        break;
+      case '3':
+        Serial.println("3");
         irsend.sendNEC(0x2FDC03F, 32);
-    }
-    if (data == "4ch") {
+        break;
+      case '4':
+        Serial.println("4");
         irsend.sendNEC(0x2FD20DF, 32);
-    }
-    if (data == "5ch") {
+        break;
+      case '5':
+        Serial.println("5");
         irsend.sendNEC(0x2FDA05F, 32);
-    }
-    if (data == "6ch") {
+        break;
+      case '6':
+        Serial.println("6");
         irsend.sendNEC(0x2FD609F, 32);
-    }
-    if (data == "7ch") {
+        break;
+      case '7':
+        Serial.println("7");
         irsend.sendNEC(0x2FDE01F, 32);
-    }
-    if (data == "8ch") {
+        break;
+      case '8':
+        Serial.println("8");
         irsend.sendNEC(0x2FD10EF, 32);
-    }
-    if (data == "9ch") {
+        break;
+      case '9':
+        Serial.println("9");
         irsend.sendNEC(0x2FD906F, 32);
-    }
-    if (data == "10ch") {
+        break;
+      case 'x':
+        Serial.println("x");
         irsend.sendNEC(0x2FD50AF, 32);
-    }
-    if (data == "11ch") {
+        break;
+      case 'y':
+        Serial.println("y");
         irsend.sendNEC(0x2FDD02F, 32);
-    }
-    if (data == "12ch") {
+        break;
+      case 'z':
+        Serial.println("z");
         irsend.sendNEC(0x2FD30CF, 32);
-    }
-    if (data == "ch_up") {
+        break;
+      case 'C':
+        Serial.println("C");
         irsend.sendNEC(0x2FDD827, 32);
-    }
-    if (data == "ch_down") {
+        break;
+      case 'c':
+        Serial.println("c");
         irsend.sendNEC(0x2FDF807, 32);
-    }
-    if (data == "vol_up") {
+        break;
+      case 'V':
+        Serial.println("V");
         irsend.sendNEC(0x2FD58A7, 32);
-    }
-    if (data == "vol_down") {
+        break;
+      case 'v':
+        Serial.println("v");
         irsend.sendNEC(0x2FD7887, 32);
+        break;
     }
+    delay(500);
+  }
 }
 
 void loop() {
