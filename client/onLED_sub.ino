@@ -37,9 +37,13 @@ Adafruit_MQTT_Client mqtt(&client, MQTT_SERVER, YOUR_SERVERPORT, MQTT_CLIENTID, 
 /****************************** Topic ***************************************/
 
 // pubulisher & subscriberの設定
-const char TOPIC_ONLED[] PROGMEM = "/server/onLED";
+const char TOPIC_ONLED_COLOR[] PROGMEM = "/server/onLED/color";
+const char TOPIC_ONLED_TIME[] PROGMEM = "/server/onLED/time";
+const char TOPIC_ONLED_INTERVAL[] PROGMEM = "/server/onLED/interval";
 
-Adafruit_MQTT_Subscribe onLEDSubscriber = Adafruit_MQTT_Subscribe(&mqtt, TOPIC_ONLED);
+Adafruit_MQTT_Subscribe onLEDColorSubscriber = Adafruit_MQTT_Subscribe(&mqtt, TOPIC_ONLED_COLOR);
+Adafruit_MQTT_Subscribe onLEDTimeSubscriber = Adafruit_MQTT_Subscribe(&mqtt, TOPIC_ONLED_TIME);
+Adafruit_MQTT_Subscribe onLEDIntervalSubscriber = Adafruit_MQTT_Subscribe(&mqtt, TOPIC_ONLED_INTERVAL);
 
 /*************************** Sketch Code ************************************/
 
@@ -67,27 +71,80 @@ void setup() {
   Serial.println("IP address: "); Serial.println(WiFi.localIP());
 
   // MQTT subscriptionを設定
-  mqtt.subscribe(&onLEDSubscriber);
+  mqtt.subscribe(&onLEDColorSubscriber);
+  mqtt.subscribe(&onLEDTimeSubscriber);
+  mqtt.subscribe(&onLEDIntervalSubscriber);
+}
+
+int timeDataInt = 0;
+int intervalDataInt = 0;
+
+void setupLED(String colorData, int timeData, int intervalData) {
+  Serial.println("setupLED");
+  Serial.println(timeData/(2*intervalData));
+  timeDataInt = 0;
+  intervalDataInt = 0;
+  if (colorData.indexOf("赤") != -1 || colorData.indexOf('r') != -1) {
+    Serial.println("赤");
+    for (int i = 0; i < timeData/(2*intervalData); i++) {
+      digitalWrite(4, HIGH);
+      delay(intervalData);
+      digitalWrite(4, LOW);
+      delay(intervalData);
+    }
+  } else if (colorData.indexOf("緑") != -1 || colorData.indexOf('g') != -1) {
+    Serial.println("緑");
+    for (int i = 0; i < timeData/(2*intervalData); i++) {
+      digitalWrite(5, HIGH);
+      delay(intervalData);
+      digitalWrite(5, LOW);
+      delay(intervalData);
+    }
+  } else if (colorData.indexOf("青") != -1 || colorData.indexOf('b') != -1) {
+    Serial.println("青");
+    for (int i = 0; i < timeData/(2*intervalData); i++) {
+      digitalWrite(16, HIGH);
+      delay(intervalData);
+      digitalWrite(16, LOW);
+      delay(intervalData);
+    }
+  }
 }
 
 void loop() {
   MQTT_connect();
+  String colorData;
+  String timeData;
+  String intervalData;
 
   //topicをPubし，"onLED"をPubした時にLEDを点灯させる
   Adafruit_MQTT_Subscribe *subscription;
   while ((subscription = mqtt.readSubscription(1000))) {
-    if (subscription == &onLEDSubscriber) {
-      for (int i = 0; i < 100; i++) {
-        digitalWrite(4, HIGH);
-        delay(50);
-        digitalWrite(4, LOW);
-        digitalWrite(5, HIGH);
-        delay(50);
-        digitalWrite(5, LOW);
-        digitalWrite(16, HIGH);
-        delay(50);
-        digitalWrite(16, LOW);
-      }
+    if (subscription == &onLEDColorSubscriber) {
+      Serial.print(F("Got: "));
+      Serial.println((char *)onLEDColorSubscriber.lastread);
+      colorData = String((char *)onLEDColorSubscriber.lastread);
+    }
+    if (subscription == &onLEDTimeSubscriber) {
+      Serial.print(F("Got: "));
+      Serial.println((char *)onLEDTimeSubscriber.lastread);
+      timeData = String((char *)onLEDTimeSubscriber.lastread);
+    }
+    if (subscription == &onLEDIntervalSubscriber) {
+      Serial.print(F("Got: "));
+      Serial.println((char *)onLEDIntervalSubscriber.lastread);
+      intervalData = String((char *)onLEDIntervalSubscriber.lastread);
+    }
+    char timeDataChar[32];
+    timeData.toCharArray(timeDataChar, 32);
+    timeDataInt = atoi(timeDataChar);
+    Serial.println(timeDataInt);
+    char intervalDataChar[32];
+    intervalData.toCharArray(intervalDataChar, 32);
+    intervalDataInt = atoi(intervalDataChar);
+    Serial.println(intervalDataInt);
+    if (timeDataInt != 0 && intervalDataInt != 0) {
+      setupLED(colorData, timeDataInt, intervalDataInt);
     }
   }
   delay(1000);
