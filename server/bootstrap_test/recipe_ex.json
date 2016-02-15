@@ -1,0 +1,16 @@
+{
+  "actionDataIf": "センサの反応",
+  "actionDataThen": "アウトプットデバイスの指定",
+  "recipeId": レシピID,
+  "recipeName": "レシピ名",
+  "valueIf": [
+    [
+      "センサの条件値"
+    ]
+  ],
+  "valueThen": [
+    [
+      "アウトプットデバイスへ送信する値"
+    ]
+  ]
+}
