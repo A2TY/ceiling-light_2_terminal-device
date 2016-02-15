@@ -4,8 +4,8 @@ import json
 import requests
 import paho.mqtt.client as mqtt
 
-host = '___ADDRESS___'#'___ADDRESS___'
-port = ___PORT___#'___PORT___'
+host = '___ADDRESS___'
+port = ___PORT___
 
 
 #Subscribeするtopicを設定

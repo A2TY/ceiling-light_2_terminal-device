@@ -7,7 +7,7 @@ import tornado.websocket
 from tornado.ioloop import PeriodicCallback
 from tornado.options import define, options, parse_command_line
 
-define("port", default = 8080, help = "run on the given port", type = int)
+define("port", default = ___PORT___, help = "run on the given port", type = int)
 
 class RecipeModalHandler(tornado.web.RequestHandler):
 
@@ -68,7 +68,7 @@ class SendWebSocket(tornado.websocket.WebSocketHandler):
         #レシピ実行ボタンが押された時
         elif ('actionRecipe' in str(message)) :
             actionRecipeId = str(message).replace('actionRecipe', '')
-            cmd = "mosquitto_pub -h 192.168.1.32 -t \"/client/actionRecipe\" -m \"" + actionRecipeId + "\""
+            cmd = "mosquitto_pub -h ___ADDRESS___ -t \"/client/actionRecipe\" -m \"" + actionRecipeId + "\""
             print (cmd)
             os.system(cmd)
 
@@ -85,7 +85,7 @@ class SendWebSocket(tornado.websocket.WebSocketHandler):
                 print(0)
                 try:
                     newRecipeData["recipeId"] = recipeDataJson[len(recipeDataJson)-1]["recipeId"] + 1
-                except:
+                except: #レシピが1つも登録されていなかった時の処理
                     newRecipeData["recipeId"] = 1
                 newRecipeDataList = recipeDataJson
                 newRecipeDataList.append(newRecipeData)
@@ -105,7 +105,8 @@ class SendWebSocket(tornado.websocket.WebSocketHandler):
                 with open('recipeData.json', 'w') as f :
                     json.dump(newRecipeDataList, f, sort_keys=True, indent=2, ensure_ascii=False)
 
-            cmd = "mosquitto_pub -h 192.168.1.32 -t \"/client/recipeData\" -m \"change\""
+            #レシピに変更・追加があったことをPubしてレシピ管理システムactionRecipe.pyに伝える
+            cmd = "mosquitto_pub -h ___ADDRESS___ -t \"/client/recipeData\" -m \"change\""
             print (cmd)
             os.system(cmd)
 
@@ -121,14 +122,14 @@ class SendWebSocket(tornado.websocket.WebSocketHandler):
                     newRecipeDataList.append(recipeDataJson[i])
             with open('recipeData.json', 'w') as f:
                 json.dump(newRecipeDataList, f, sort_keys=True, indent=2, ensure_ascii=False)
-            cmd = "mosquitto_pub -h 192.168.1.32 -t \"/client/recipeData\" -m \"change\""
+            #レシピが削除されたことをPubしてレシピ管理システムactionRecipe.pyに伝える
+            cmd = "mosquitto_pub -h ___ADDRESS___ -t \"/client/recipeData\" -m \"change\""
             print (cmd)
             os.system(cmd)
 
-
-        #ネットワークリモコンのリクエストをMQTTブローカにpubを送信
+        #ネットワークリモコンのリクエストをMQTTブローカにPubを送信
         else :
-            cmd = "mosquitto_pub -h 192.168.1.32 -t \"/server/tvIr\" -m \"" + message + "\""
+            cmd = "mosquitto_pub -h ___ADDRESS___ -t \"/server/tvIr\" -m \"" + message + "\""
             print (cmd)
             os.system(cmd)
 
@@ -153,4 +154,3 @@ if __name__ == "__main__":
     parse_command_line()
     app.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
-
