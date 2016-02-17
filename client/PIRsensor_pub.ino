@@ -1,11 +1,11 @@
-/*************************************************** 
+/******************************************************************************** 
   人感センサSB412Aの反応をMQTTで送信するMQTTClient
 
   ESP-WROOM-02のアナログ入力は1Vに分圧してTOUTに入力
   
   http://akizukidenshi.com/catalog/g/gM-09002/
   https://github.com/adafruit/Adafruit_MQTT_Library
- ****************************************************/
+ *********************************************************************************/
 
 #include <ESP8266WiFi.h>
 #include <Adafruit_MQTT.h>
@@ -22,7 +22,7 @@ extern "C" {
 /***************************** Your Setup ************************************/
 
 #define YOUR_SERVER      "___ADDRESS___"
-#define YOUR_SERVERPORT  1883
+#define YOUR_SERVERPORT  ___PORTS___
 #define YOUR_USERNAME    "...your username..."
 #define YOUR_PASSWORD    "...your password..."
 

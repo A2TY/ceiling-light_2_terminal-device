@@ -17,7 +17,7 @@ recipeDataList = {
 }
 
 #レシピデータのIfとThenを日本語からMQTTのtopic名に変換
-def transfórmTopicName(recipeDataJson):
+def transformTopicName(recipeDataJson):
     global recipeDataList
     topicList = [['人感センサが反応', '温度センサが反応', '湿度センサが反応', '加速度センサが反応', 'スイッチが押される', 'TVに赤外線送信', 'LEDを点灯', 'ブザーを鳴らす'], ['PIRsensor', 'temperature', 'humidity', 'acceleration', 'switch', 'tvIr', 'onLED', 'ringSpeaker']]
 
@@ -54,7 +54,7 @@ def on_message(client, userdata, msg):
     #レシピデータが更新された時に外部ファイルrecipeData.jsonからレシピデータを取得し直す
     if ('recipeData' in str(msg.topic)):
         print ('recipeData')
-        recipeDataList = transfórmTopicName(openRecipeDataFile())
+        recipeDataList = transformTopicName(openRecipeDataFile())
 
     #レシピ管理サイトでレシピ実行ボタンが押された時に登録されたactionDataThenをPubする
     elif ('actionRecipe' in str(msg.topic)):
@@ -66,7 +66,12 @@ def on_message(client, userdata, msg):
                     client.publish('/server/onLED/time', deletePattern.sub('', str(recipeDataList[i]["valueThen"][0][1])))
                     client.publish('/server/onLED/interval', deletePattern.sub('', str(recipeDataList[i]["valueThen"][0][2])))
                 else :
-                    client.publish('/server/' + recipeDataList[i]["actionDataThen"], deletePattern.sub('', str(recipeDataList[i]["valueThen"][0])))
+                    if (recipeDataList[i]["actionDataThen"] == "onLED"):
+                        client.publish('/server/onLED/color', deletePattern.sub('', str(recipeDataList[i]["valueThen"][0][0])))
+                        client.publish('/server/onLED/time', deletePattern.sub('', str(recipeDataList[i]["valueThen"][0][1])))
+                        client.publish('/server/onLED/interval', deletePattern.sub('', str(recipeDataList[i]["valueThen"][0][2])))
+                    else :
+                        client.publish('/server/' + recipeDataList[i]["actionDataThen"], deletePattern.sub('', str(recipeDataList[i]["valueThen"][0])))
                     break
 
     #Subした内容に応じて登録されたactionDataThenをPubする
@@ -82,13 +87,18 @@ def on_message(client, userdata, msg):
                         else :
                             client.publish('/server/' + recipeDataList[i]["actionDataThen"], deletePattern.sub('', str(recipeDataList[i]["valueThen"][0])))
                 else :
-                    client.publish('/server/' + recipeDataList[i]["actionDataThen"], deletePattern.sub('', str(recipeDataList[i]["valueThen"][0])))
+                    if (recipeDataList[i]["actionDataThen"] == "onLED"):
+                        client.publish('/server/onLED/color', deletePattern.sub('', str(recipeDataList[i]["valueThen"][0][0])))
+                        client.publish('/server/onLED/time', deletePattern.sub('', str(recipeDataList[i]["valueThen"][0][1])))
+                        client.publish('/server/onLED/interval', deletePattern.sub('', str(recipeDataList[i]["valueThen"][0][2])))
+                    else :
+                        client.publish('/server/' + recipeDataList[i]["actionDataThen"], deletePattern.sub('', str(recipeDataList[i]["valueThen"][0])))
                 print ('other')
 
 
 if __name__ == '__main__':
     #外部ファイルrecipeData.jsonからレシピデータを取得
-    transfórmTopicName(openRecipeDataFile())
+    transformTopicName(openRecipeDataFile())
 
     print (recipeDataList)
 

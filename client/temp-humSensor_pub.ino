@@ -1,4 +1,4 @@
-/*************************************************** 
+/********************************************************************************* 
   温湿度センサHDC1000を用いたMQTT_Client
 
   I2C通信を用いる
@@ -9,7 +9,7 @@
 
   https://github.com/adafruit/Adafruit_MQTT_Library
   http://akizukidenshi.com/catalog/g/gM-08775/
- ****************************************************/
+ **********************************************************************************/
 
 #include <ESP8266WiFi.h>
 #include <Adafruit_MQTT.h>
@@ -25,7 +25,7 @@
 /***************************** Your Setup ************************************/
 
 #define YOUR_SERVER      "___ADDRESS___"
-#define YOUR_SERVERPORT  1883
+#define YOUR_SERVERPORT  ___PORTS___
 #define YOUR_USERNAME    "...your username..."
 #define YOUR_PASSWORD    "...your password..."
 
@@ -84,8 +84,8 @@ void setup() {
 
 void loop() {
   MQTT_connect();
-  double tempValue = 0;
-  double humValue = 0;
+  double tempValue = 0; //温度センサから読み取ったデータを格納
+  double humValue = 0;  //湿度センサから読み取ったデータを格納
 
   //温度および湿度をセンサから読み取る
   tempValue = hdc.readTemperature();
