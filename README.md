@@ -1,5 +1,5 @@
 <img src="https://github.com/A2TY/ceiling-light_2_terminal-device/blob/master/c2t_logo.png" alt="c2t logo" height="70" >
-# Project Ceiling Light 2 Terminal Device
+# module-IoT
 
 ## 概要
 このプロジェクトは，シーリングライトの電子端末化を行うものである．mosquittoサーバとしてRaspberry Piを使用し，クライアントにESP-WROOM-02を用いてMQTT通信により連携を行う．主な機能は，ネットワークリモコンおよび情報通知である．
