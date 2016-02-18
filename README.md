@@ -1,32 +1,15 @@
 # module-IoT
 
 ## 概要
-このプロジェクトは，シーリングライトの電子端末化を行うものである．mosquittoサーバとしてRaspberry Piを使用し，クライアントにESP-WROOM-02を用いてMQTT通信により連携を行う．主な機能は，ネットワークリモコンおよび情報通知である．
+センサとアウトプット部分を個々に分け，センサデータに応じた動作をユーザによって自由に設定できるIoT環境の構築．センサデバイスおよびアウトプットデバイスは，ESP-WROOM-02を使用．デバイス同士の通信は，MQTTを使用．
 
-リモコンサイトおよびレシピ管理サイトはBootstrapテーマ「Honoka」を使用しています．
+リモコン・レシピ管理サイトはBootstrapテーマ「Honoka」を使用．
 [http://honokak.osaka/](http://honokak.osaka/)
 
-
-## 機能
-### ネットワークリモコン
-スマートフォン・PCからWebSocketを用いて情報を送り，シーリングライトから赤外線LEDを用いてTVやエアコンに送信する．
-
-### 情報通知
-Twitterから情報を取得し，フルカラーLEDの点灯の違いによって情報を通知する．
-
-**通知内容**
-* 天気　　　　　　　tenki.jp （ 東京 ）　@tenkijp_tokyo
-* 電車の遅延情報　　東武東上線運行情報【非公式】　@train_tbtoj
-
-### リアル版IFTTT
-あらゆるサービスを連携させるWebサービスIFTTTを現実の世界で行えるようにする．
-
-
 ## 使用した環境および言語
-__Raspberry Pi 2 Model B__
-
+__Server__
 * OS
-	* RASPBIAN JESSIE（Kernel version:4.1）
+	* CentOS 6.7
 
 * WebSocket
 	* tornado
@@ -39,11 +22,18 @@ __Raspberry Pi 2 Model B__
 
 * 言語
 	* python
-	* html
+	* HTML
 	* JavaScript
 	* ShellScript
 
-__ESP-WROOM-02__
+__Client__
+* メインプラットフォーム
+	* ESP-WROOM-02
+
+* センサ
+	* 人感センサ　　[http://akizukidenshi.com/catalog/g/gM-09002/](http://akizukidenshi.com/catalog/g/gM-09002/)
+	* 温湿度センサ　[http://akizukidenshi.com/catalog/g/gM-08775/](http://akizukidenshi.com/catalog/g/gM-08775/)
+	* 
 
 * MQTT
 	* Adafruit_MQTT.h
@@ -54,5 +44,3 @@ __ESP-WROOM-02__
 
 * 言語
 	* Arduino
-
-
