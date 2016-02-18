@@ -74,6 +74,11 @@ void loop() {
     temperaturePublisher.publish("on");
     delay(500);
   }
+  
+  // MQTTブローカにpingを送る
+  if(! mqtt.ping()) {
+    mqtt.disconnect();
+  }
 }
 
 // MQTT serverの接続状況を調べ切断されていれば再接続

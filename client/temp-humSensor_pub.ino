@@ -98,6 +98,11 @@ void loop() {
   Serial.print("Temp: "); Serial.print(tempValue);
   Serial.print("\t\tHum: "); Serial.println(humValue);
   delay(1000*60); //1分に1回センサから値を読み取る
+  
+  // MQTTブローカにpingを送る
+  if(! mqtt.ping()) {
+    mqtt.disconnect();
+  }
 }
 
 // MQTT serverの接続状況を調べ切断されていれば再接続

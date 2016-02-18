@@ -207,6 +207,11 @@ void loop() {
             onWetherLight(recevWetherColor);
         }
     }
+    
+    // MQTTブローカにpingを送る
+  if(! mqtt.ping()) {
+    mqtt.disconnect();
+  }
 
     delay(1000);
 }

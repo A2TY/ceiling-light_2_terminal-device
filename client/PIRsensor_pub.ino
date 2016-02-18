@@ -95,6 +95,11 @@ void loop() {
     PIRsensorPublisher.publish("on");
     onCount = 0;
   }
+  
+  // MQTTブローカにpingを送る
+  if(! mqtt.ping()) {
+    mqtt.disconnect();
+  }
 
   delay(1000);
 }
