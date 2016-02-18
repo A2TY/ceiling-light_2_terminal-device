@@ -1,4 +1,3 @@
-<img src="https://github.com/A2TY/ceiling-light_2_terminal-device/blob/master/c2t_logo.png" alt="c2t logo" height="70" >
 # module-IoT
 
 ## 概要
