@@ -21,7 +21,7 @@
 /***************************** Your Setup ************************************/
 
 #define YOUR_SERVER      "___ADDRESS___"
-#define YOUR_SERVERPORT  1883
+#define YOUR_SERVERPORT  ___PORTS___
 #define YOUR_USERNAME    "...your username..."
 #define YOUR_PASSWORD    "...your password..."
 
