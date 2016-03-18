@@ -151,7 +151,9 @@ void sendIrData(String data) {
         irsend.sendNEC(0x2FD7887, 32);
         break;
     }
-    delay(500);
+    if (data.length() != 1) {
+      delay(2000);
+    }
   }
 }
 
